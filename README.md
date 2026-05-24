@@ -3,7 +3,7 @@
 Conversational emotion extraction — a small case study for Brainapptica.
 Talk to it about your day; it surfaces negative-valence emotions grounded in your own words.
 
-**Live:** _<set after first deploy>_
+**Live:** https://brainaptica-test-task-two.vercel.app
 **Stack:** Next.js 16 (App Router) · AI SDK v6 via Vercel AI Gateway (`anthropic/claude-sonnet-4.6`) · Neon Postgres + Drizzle · Tailwind v4 · Bun.
 
 ## What it does
