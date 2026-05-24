@@ -8,7 +8,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "how was your day",
+  title: "How was your day?",
   description: "Conversational emotion extraction — Brainapptica case study",
 };
 
