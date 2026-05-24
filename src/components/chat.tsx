@@ -73,14 +73,29 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
             <h1 className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">how was your day</h1>
             <p className="mt-0.5 text-xs text-zinc-500">conversational emotion extraction · brainapptica case study</p>
           </div>
-          <a
-            href="https://github.com/elumixor/brainaptica-test-task"
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-          >
-            source ↗
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={async () => {
+                if (busy) return;
+                if (!empty && !confirm("Start a new conversation? Current session will be archived.")) return;
+                await fetch("/api/session/reset", { method: "POST" });
+                window.location.reload();
+              }}
+              disabled={busy}
+              className="rounded-md border border-zinc-300 px-2.5 py-1 text-xs text-zinc-600 hover:border-zinc-500 hover:text-zinc-900 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-100"
+            >
+              new chat
+            </button>
+            <a
+              href="https://github.com/elumixor/brainaptica-test-task"
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
+              source ↗
+            </a>
+          </div>
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-8">
