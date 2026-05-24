@@ -24,34 +24,89 @@ function GithubMark({ className }: { className?: string }) {
   );
 }
 
-function MobileEmotionStrip({ emotions }: { emotions: EmotionRow[] }) {
-  if (emotions.length === 0) return null;
-  // dedupe by label, keep peak intensity
-  const map = new Map<string, number>();
+interface GroupedEmotion {
+  label: string;
+  intensity: number;
+  evidence: string;
+  rationale: string;
+  count: number;
+}
+
+function groupEmotions(emotions: EmotionRow[]): GroupedEmotion[] {
+  const map = new Map<string, GroupedEmotion>();
   for (const e of emotions) {
-    map.set(e.label, Math.max(e.intensity, map.get(e.label) ?? 0));
+    const g = map.get(e.label);
+    if (!g || e.intensity > g.intensity) {
+      map.set(e.label, {
+        label: e.label,
+        intensity: e.intensity,
+        evidence: e.evidence,
+        rationale: e.rationale,
+        count: (g?.count ?? 0) + 1,
+      });
+    } else {
+      g.count += 1;
+    }
   }
-  const items = [...map.entries()].sort((a, b) => b[1] - a[1]);
+  return [...map.values()].sort((a, b) => b.intensity - a.intensity);
+}
+
+function MobileEmotionStrip({ emotions }: { emotions: EmotionRow[] }) {
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
+  const items = groupEmotions(emotions);
+  if (items.length === 0) return null;
+  const active = items.find((g) => g.label === openLabel) ?? null;
+
   return (
     <div className="border-b border-zinc-200/80 px-4 py-3 lg:hidden dark:border-zinc-800/80">
       <div className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-        Detected · {items.length}
+        Detected · {items.length} · tap to inspect
       </div>
       <div className="flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {items.map(([label, intensity]) => (
-          <span
-            key={label}
-            className="flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-2.5 py-1 text-[11px] capitalize text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
-          >
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100"
-              style={{ opacity: 0.3 + intensity * 0.7 }}
-            />
-            {label}
-            <span className="tabular-nums text-zinc-400">{Math.round(intensity * 100)}</span>
-          </span>
-        ))}
+        {items.map((g) => {
+          const isOpen = g.label === openLabel;
+          return (
+            <button
+              type="button"
+              key={g.label}
+              onClick={() => setOpenLabel(isOpen ? null : g.label)}
+              aria-pressed={isOpen}
+              className={
+                isOpen
+                  ? "flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-900 bg-zinc-900 px-2.5 py-1 text-[11px] capitalize text-zinc-50 dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                  : "flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-300 bg-white px-2.5 py-1 text-[11px] capitalize text-zinc-800 transition-colors hover:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200"
+              }
+            >
+              <span
+                className={isOpen ? "h-1.5 w-1.5 rounded-full bg-zinc-50 dark:bg-zinc-900" : "h-1.5 w-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100"}
+                style={{ opacity: 0.3 + g.intensity * 0.7 }}
+              />
+              {g.label}
+              <span className={isOpen ? "tabular-nums opacity-70" : "tabular-nums text-zinc-400"}>
+                {Math.round(g.intensity * 100)}
+              </span>
+            </button>
+          );
+        })}
       </div>
+
+      {active && (
+        <div className="mt-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="text-sm font-medium capitalize text-zinc-900 dark:text-zinc-50">{active.label}</span>
+            <span className="text-[10px] tabular-nums text-zinc-500">
+              {active.count > 1 ? `${active.count}× · ` : ""}peak {Math.round(active.intensity * 100)}%
+            </span>
+          </div>
+          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+            <div className="h-full bg-zinc-900 dark:bg-zinc-100" style={{ width: `${Math.round(active.intensity * 100)}%` }} />
+          </div>
+          <blockquote className="mt-3 border-l-2 border-zinc-300 pl-2.5 text-xs italic text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
+            "{active.evidence}"
+          </blockquote>
+          <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">{active.rationale}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -209,6 +264,7 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
               }}
               placeholder={busy ? "Thinking…" : "Tell me about your day…"}
               rows={1}
+              maxLength={4000}
               className="min-h-[44px] max-h-[200px] flex-1 resize-none overflow-y-auto rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm leading-snug text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
             />
             <button

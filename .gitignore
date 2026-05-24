@@ -44,3 +44,7 @@ next-env.d.ts
 .playwright-mcp/
 *.png
 *.pdf
+
+# private notes (not for submission)
+issues.md
+strategy.md

@@ -57,12 +57,9 @@ Emotions are foreign-keyed to the user message that triggered them, so a future 
 
 ## What I'd do with another week
 
-- A real eval harness: ~50 hand-labeled transcripts, precision/recall on labels, automated check that `evidence` is a substring of the user message.
-- Voice input (push-to-talk) — it changes how people disclose. Probably the single biggest UX win.
-- A session-end summary that reconciles per-turn extractions into a small set of themes.
-- Token-level grounding instead of free-form quotes (return character offsets, highlight in the transcript).
-- A "what this isn't" disclaimer surface — non-clinical, not a therapist — at the start of each session.
-- Configurable taxonomies as a toggle (free-form vs. Plutchik) and a small comparison of agreement between them.
+- A real eval harness: ~50 hand-labeled transcripts, precision/recall on labels, the substring-check is already in code (`route.ts`) but the wider harness isn't.
+- Voice input. Push-to-talk changes how people disclose more than any other affordance I can think of in two days.
+- Token-level grounding instead of free-form quotes: return character offsets so the transcript can highlight the evidence span in place.
 
 ## What's deliberately not here
 

@@ -1,11 +1,14 @@
 import { convertToModelMessages, generateText, Output, streamText, type UIMessage } from "ai";
-import { and, asc, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { emotions, messages as messagesTable } from "@/db/schema";
 import { CHAT_MODEL, EXTRACT_INSTRUCTION, EXTRACT_MODEL, emotionSchema, SYSTEM_PROMPT } from "@/lib/ai";
 import { getOrCreateSession } from "@/lib/session";
 
 export const maxDuration = 60;
+
+export const MAX_USER_MESSAGE_CHARS = 4000;
+export const MAX_USER_MESSAGES_PER_SESSION = 50;
 
 function textOf(m: UIMessage): string {
   return m.parts
@@ -30,15 +33,17 @@ export async function POST(req: Request) {
   let savedUserId: string | null = null;
   if (latestUser.role === "user") {
     const content = textOf(latestUser);
+    if (content.length > MAX_USER_MESSAGE_CHARS) {
+      return new Response("message too long", { status: 413 });
+    }
     if (content.length > 0) {
-      // dedupe: skip insert if same content was just saved (e.g. retry)
-      const [recent] = await db
-        .select()
+      const userCount = await db
+        .select({ c: count() })
         .from(messagesTable)
-        .where(and(eq(messagesTable.sessionId, sessionId), eq(messagesTable.role, "user")))
-        .orderBy(asc(messagesTable.createdAt));
-      // simple approach: always insert; duplicates on retry are acceptable for case study
-      void recent;
+        .where(and(eq(messagesTable.sessionId, sessionId), eq(messagesTable.role, "user")));
+      if ((userCount[0]?.c ?? 0) >= MAX_USER_MESSAGES_PER_SESSION) {
+        return new Response("session message limit reached; start a new chat", { status: 429 });
+      }
       const [row] = await db
         .insert(messagesTable)
         .values({ sessionId, role: "user", content, parts: latestUser.parts as unknown })
@@ -85,10 +90,18 @@ export async function POST(req: Request) {
               output: Output.object({ schema: emotionSchema }),
             });
 
-            const detected = output.emotions;
-            if (detected.length > 0) {
+            // Grounding gate: drop any emotion whose evidence isn't a verbatim
+            // substring of the user message. The schema asks the model for a
+            // verbatim quote; this enforces it.
+            const grounded = output.emotions.filter((e) => userText.includes(e.evidence));
+            const dropped = output.emotions.length - grounded.length;
+            if (dropped > 0) {
+              console.warn(`[extract] dropped ${dropped} ungrounded emotion(s) for message ${savedUserId}`);
+            }
+
+            if (grounded.length > 0) {
               await db.insert(emotions).values(
-                detected.map((e) => ({
+                grounded.map((e) => ({
                   sessionId,
                   messageId: savedUserId as string,
                   label: e.label.toLowerCase().trim(),
