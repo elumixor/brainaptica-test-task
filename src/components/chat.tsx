@@ -23,6 +23,12 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
   const [input, setInput] = useState("");
   const [emotions, setEmotions] = useState<EmotionRow[]>(initialEmotions);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Refocus the textarea when the assistant turn is done so the user can keep typing.
+  useEffect(() => {
+    if (status === "ready") inputRef.current?.focus();
+  }, [status]);
 
   // Auto-scroll on new content
   // biome-ignore lint/correctness/useExhaustiveDependencies: depend on messages array reference to scroll on each turn
@@ -115,18 +121,19 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
         >
           <div className="mx-auto flex max-w-2xl items-end gap-2">
             <textarea
+              ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
+                  if (busy) return;
                   (e.currentTarget.form as HTMLFormElement).requestSubmit();
                 }
               }}
               placeholder={busy ? "thinking…" : "tell me about your day…"}
               rows={1}
               className="min-h-[44px] max-h-40 flex-1 resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
-              disabled={busy}
             />
             <button
               type="submit"

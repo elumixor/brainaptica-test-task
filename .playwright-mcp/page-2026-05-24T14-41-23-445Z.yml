@@ -1,0 +1,24 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - heading "how was your day" [level=1] [ref=e6]
+          - paragraph [ref=e7]: conversational emotion extraction · brainapptica case study
+        - link "source ↗" [ref=e8] [cursor=pointer]:
+          - /url: https://github.com/elumixor/brainaptica-test-task
+      - generic [ref=e10]:
+        - generic [ref=e24]:
+          - generic [ref=e25]: you
+          - generic [ref=e26]: honestly today felt heavy. my standup ran long, I missed lunch, and I've been dreading a conversation with my landlord about the rent hike. I'm just tired and a bit on edge.
+        - generic [ref=e27]: something went wrong. Free credits temporarily have restricted access due to abuse. We are working on a resolution. Paid credits continue to have unrestricted access. Purchase credits at https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dtop-up
+      - generic [ref=e13]:
+        - textbox "tell me about your day…" [ref=e14]
+        - button "send" [disabled] [ref=e15]
+    - complementary [ref=e16]:
+      - generic [ref=e17]:
+        - heading "detected negative emotions" [level=2] [ref=e18]
+        - paragraph [ref=e19]: extracted per user turn · grounded in a verbatim quote
+      - paragraph [ref=e21]: nothing extracted yet. say something to see it light up.
+      - generic [ref=e22]: free-form labels · intensity 0–1 · negative valence only
+  - alert [ref=e23]

@@ -1,0 +1,54 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - heading "how was your day" [level=1] [ref=e6]
+          - paragraph [ref=e7]: conversational emotion extraction · brainapptica case study
+        - link "source ↗" [ref=e8] [cursor=pointer]:
+          - /url: https://github.com/elumixor/brainaptica-test-task
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: you
+          - generic [ref=e13]: honestly today felt heavy. my standup ran long, I missed lunch, and I've been dreading a conversation with my landlord about the rent hike. I'm just tired and a bit on edge.
+        - generic [ref=e15]: listener
+        - generic [ref=e29]:
+          - generic [ref=e30]: you
+          - generic [ref=e31]: today was rough — work piled up and I argued with my partner over something small that wasn't actually small.
+        - generic [ref=e32]:
+          - generic [ref=e33]: listener
+          - generic [ref=e34]: Missing lunch and a long standup, and then the landlord thing still waiting — that is a lot to carry through one day. What is the conversation with your landlord actually about — is it something you have been putting off for a while?
+      - generic [ref=e18]:
+        - textbox "tell me about your day…" [ref=e36]
+        - button "send" [disabled] [ref=e20]
+    - complementary [ref=e21]:
+      - generic [ref=e22]:
+        - heading "detected negative emotions" [level=2] [ref=e23]
+        - paragraph [ref=e24]: extracted per user turn · grounded in a verbatim quote
+      - list [ref=e37]:
+        - listitem [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]: distress
+            - generic [ref=e41]: peak 70%
+          - blockquote [ref=e45]: “today was rough”
+          - paragraph [ref=e46]: Describing the day as 'rough' reflects a general negative emotional tone of hardship and distress.
+        - listitem [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]: stress
+            - generic [ref=e50]: peak 65%
+          - blockquote [ref=e54]: “work piled up”
+          - paragraph [ref=e55]: Work piling up signals an overwhelming load, a negative state of pressure and strain.
+        - listitem [ref=e56]:
+          - generic [ref=e57]:
+            - generic [ref=e58]: relationship tension
+            - generic [ref=e59]: peak 65%
+          - blockquote [ref=e63]: “argued with my partner over something small that wasn't actually small”
+          - paragraph [ref=e64]: The acknowledgment that the argument was not trivial suggests unresolved interpersonal conflict causing emotional pain.
+        - listitem [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]: frustration
+            - generic [ref=e68]: peak 60%
+          - blockquote [ref=e72]: “I argued with my partner over something small that wasn't actually small”
+          - paragraph [ref=e73]: Arguing over something minimized but actually significant indicates underlying frustration that was difficult to contain.
+      - generic [ref=e27]: free-form labels · intensity 0–1 · negative valence only
+  - alert [ref=e28]

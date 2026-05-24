@@ -1,0 +1,20 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - heading "how was your day" [level=1] [ref=e6]
+          - paragraph [ref=e7]: conversational emotion extraction · brainapptica case study
+        - link "source ↗" [ref=e8] [cursor=pointer]:
+          - /url: https://github.com/elumixor/brainaptica-test-task
+      - generic [ref=e11]: say something about your day. the model will listen and the panel on the right will surface negative emotions it picks up, grounded in your own words.
+      - generic [ref=e13]:
+        - textbox "tell me about your day…" [ref=e14]
+        - button "send" [disabled] [ref=e15]
+    - complementary [ref=e16]:
+      - generic [ref=e17]:
+        - heading "detected negative emotions" [level=2] [ref=e18]
+        - paragraph [ref=e19]: extracted per user turn · grounded in a verbatim quote
+      - paragraph [ref=e21]: nothing extracted yet. say something to see it light up.
+      - generic [ref=e22]: free-form labels · intensity 0–1 · negative valence only
+  - alert [ref=e23]
