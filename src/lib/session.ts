@@ -4,36 +4,23 @@ import { getDb } from "@/db/client";
 import { sessions } from "@/db/schema";
 
 const COOKIE = "sid";
-const ONE_YEAR = 60 * 60 * 24 * 365;
-
-function newSid() {
-  // crypto.randomUUID is available in Node 24 + edge runtimes
-  return crypto.randomUUID();
-}
 
 /**
- * Ensure the request has a session cookie + a row in `sessions`.
- * Returns the session id (DB uuid, not the cookie value).
+ * Ensure the cookie's session has a corresponding row in `sessions`.
+ * The cookie itself is set by `src/proxy.ts` before the request reaches us.
+ * Returns the session id (DB uuid).
  */
 export async function getOrCreateSession(): Promise<string> {
   const store = await cookies();
-  let sid = store.get(COOKIE)?.value;
-  const db = getDb();
-
-  if (sid) {
-    const [existing] = await db.select().from(sessions).where(eq(sessions.cookieSid, sid)).limit(1);
-    if (existing) return existing.id;
+  const sid = store.get(COOKIE)?.value;
+  if (!sid) {
+    throw new Error("missing session cookie — proxy.ts did not set it");
   }
 
-  // create cookie if missing, insert session row
-  sid ??= newSid();
+  const db = getDb();
+  const [existing] = await db.select().from(sessions).where(eq(sessions.cookieSid, sid)).limit(1);
+  if (existing) return existing.id;
+
   const [created] = await db.insert(sessions).values({ cookieSid: sid }).returning();
-  store.set(COOKIE, sid, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: ONE_YEAR,
-  });
   return created.id;
 }
