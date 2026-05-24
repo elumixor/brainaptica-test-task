@@ -30,6 +30,14 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
     if (status === "ready") inputRef.current?.focus();
   }, [status]);
 
+  // Auto-grow the textarea up to a cap.
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+  }, [input]);
+
   // Auto-scroll on new content
   // biome-ignore lint/correctness/useExhaustiveDependencies: depend on messages array reference to scroll on each turn
   useEffect(() => {
@@ -133,7 +141,7 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
               }}
               placeholder={busy ? "thinking…" : "tell me about your day…"}
               rows={1}
-              className="min-h-[44px] max-h-40 flex-1 resize-none rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+              className="min-h-[44px] max-h-[200px] flex-1 resize-none overflow-y-auto rounded-xl border border-zinc-300 bg-white px-3 py-2.5 text-sm leading-snug text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
             />
             <button
               type="submit"
