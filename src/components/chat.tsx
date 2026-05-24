@@ -241,7 +241,7 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
         </div>
 
         <form
-          className="border-t border-zinc-200 bg-white px-6 py-4 dark:border-zinc-800 dark:bg-zinc-950"
+          className="border-t border-zinc-200 bg-white px-6 pt-4 pb-2 dark:border-zinc-800 dark:bg-zinc-950"
           onSubmit={(e) => {
             e.preventDefault();
             const text = input.trim();
@@ -276,6 +276,19 @@ export function Chat({ initialMessages, initialEmotions }: Props) {
               <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
             </button>
           </div>
+          <p className="mx-auto mt-2 max-w-2xl text-center text-[10px] leading-relaxed text-zinc-400">
+            Not a therapist, not a crisis service. If you're in crisis, call or text 988 (US) or
+            {" "}
+            <a
+              href="https://www.samaritans.org"
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:text-zinc-600 dark:hover:text-zinc-300"
+            >
+              Samaritans
+            </a>{" "}
+            (UK, 116 123).
+          </p>
         </form>
       </main>
 

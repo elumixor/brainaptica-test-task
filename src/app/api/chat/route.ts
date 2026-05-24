@@ -90,10 +90,13 @@ export async function POST(req: Request) {
               output: Output.object({ schema: emotionSchema }),
             });
 
-            // Grounding gate: drop any emotion whose evidence isn't a verbatim
-            // substring of the user message. The schema asks the model for a
-            // verbatim quote; this enforces it.
-            const grounded = output.emotions.filter((e) => userText.includes(e.evidence));
+            // Grounding gate: drop any emotion whose evidence isn't a substring
+            // of the user message, after case- and whitespace-normalization.
+            // The schema asks the model for a verbatim quote; this enforces it
+            // without dying on smart quotes or trailing punctuation.
+            const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+            const userNorm = norm(userText);
+            const grounded = output.emotions.filter((e) => userNorm.includes(norm(e.evidence)));
             const dropped = output.emotions.length - grounded.length;
             if (dropped > 0) {
               console.warn(`[extract] dropped ${dropped} ungrounded emotion(s) for message ${savedUserId}`);
