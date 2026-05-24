@@ -79,7 +79,3 @@ A static footer in the UI points to 988 (US) and Samaritans (UK) so someone in c
 - Multi-language (brief is English-only)
 - Per-IP rate limiting beyond the session message cap
 - A test suite (two-day ceiling, honesty over polish)
-
----
-
-Submission for the Brainapptica full-stack AI-first case study, May 2026.
